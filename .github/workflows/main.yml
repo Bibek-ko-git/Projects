@@ -1,0 +1,32 @@
+name: Generalized Alpha CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: dealii/dealii:v9.4.0-focal
+      options: --user root
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Create build directory
+      run: mkdir -p build
+
+    - name: Configure CMake
+      working-directory: build
+      run: cmake ..
+
+    - name: Build
+      working-directory: build
+      run: make -j2
+
+    - name: Run tests
+      working-directory: build
+      run: ctest --output-on-failure
