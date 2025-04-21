@@ -17,16 +17,16 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Create build directory
-      run: mkdir -p Computation@scale/Generalized_alpha_NS_1D/build
+      run: mkdir -p Computation@Scale/Generalized_alpha_NS_1D/build
 
     - name: Configure CMake
-      working-directory: Computation@scale/Generalized_alpha_NS_1D/build
+      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
       run: cmake ..
 
     - name: Build
-      working-directory: Computation@scale/Generalized_alpha_NS_1D/build
+      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
       run: make -j2
 
     - name: Run tests
-      working-directory: Computation@scale/Generalized_alpha_NS_1D/build
+      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
       run: ctest --output-on-failure
