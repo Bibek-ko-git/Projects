@@ -25,7 +25,7 @@ jobs:
 
     - name: Build
       working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
-      run: make -j2
+      run: make -j${NPROC}
 
     - name: Run tests
       working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
