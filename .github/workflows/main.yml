@@ -1,32 +1,40 @@
-name: Generalized Alpha CI
-
+name: Manufactured solver test
 on:
   push:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: dealii/dealii:v9.4.0-focal
+      image: dealii/dealii:master-focal
       options: --user root
-
     steps:
     - uses: actions/checkout@v2
-
-    - name: Create build directory
-      run: mkdir -p Computation@Scale/Generalized_alpha_NS_1D/build
-
-    - name: Configure CMake
-      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
-      run: cmake ..
-
-    - name: Build
-      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
-      run: make -j${NPROC}
-
-    - name: Run tests
-      working-directory: Computation@Scale/Generalized_alpha_NS_1D/build
-      run: ctest --output-on-failure
+    
+    - name: Update packages
+      run: |
+        apt-get update
+        apt-get install -yq valgrind libomp-dev
+        
+    - name: Install Catch2
+      run: |
+        git clone https://github.com/catchorg/Catch2.git
+        cd Catch2
+        git checkout v3.4.0
+        cmake -B build .
+        cmake --build build --target install
+        cd ..
+        
+    - name: Configure
+      run: |
+        mkdir -p build
+        cd build
+        cmake ..
+        
+    - name: Build and test
+      run: |
+        cd build
+        make -j$(nproc)
+        ./manufactured_test
