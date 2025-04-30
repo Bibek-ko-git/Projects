@@ -25,17 +25,17 @@ jobs:
         git checkout v3.4.0
         cmake -B build .
         cmake --build build --target install
-        cd ../..
+        cd ..
         
     - name: Configure
+      working-directory: ./Computation@Scale
       run: |
-        cd Computation@Scale
         mkdir -p build
         cd build
         cmake ..
         
     - name: Build and test
+      working-directory: ./Computation@Scale/build
       run: |
-        cd build
         make -j$(nproc)
         ./manufactured_test
