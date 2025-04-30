@@ -25,10 +25,11 @@ jobs:
         git checkout v3.4.0
         cmake -B build .
         cmake --build build --target install
-        cd ..
+        cd ../..
         
     - name: Configure
       run: |
+        cd Computation@Scale
         mkdir -p build
         cd build
         cmake ..
