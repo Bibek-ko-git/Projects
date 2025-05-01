@@ -7,6 +7,7 @@ A finite element implementation of the incompressible Navier-Stokes equations us
 ## Overview
 
 The software package provides a parallel implementation of the incompressible Navier-Stokes equations using the finite element method. It features a stabilized P2-P1 Taylor-Hood element formulation for spatial discretization and a generalized-alpha method for time integration. The package includes a test case of a steady method of manufactured solutions (MMS), for verification of the solver's accuracy and convergence properties. More rigorous test cases will be added in the future.
+Based on previous implementation in FENICSx using the similar method. That can be reviewed here: [git@github.com:Bibek-ko-git/FEniCSx-for-NS.git](https://github.com/Bibek-ko-git/FEniCSx-for-NS.git)
 
 ## Features
 
@@ -55,6 +56,23 @@ make -j$(nproc)
 # For MPI sun
 mpirun -np number of processors ./navier_stokes_pipe
 ```
+## Code Structure
+- **NavierStokesSolver**: Base class implementing the core solver functionality
+- **ChannelFlowSolver**: Derived class for 2D pipe flow simulations more 2D cases can be built upon and added eg. Cavity, flow over cylinder.
+- **ManufacturedSolutionSolver**: Specialized class for verification using manufactured solution
+
 ## Post processing 
-- Paraview can be used for post processing the results.
+- [Paraview](https://www.paraview.org/) can be used for post processing the results.
+
+## License 
+This project is licensed under the BSD 3-Clause License - see LICENSE file for details.
+
+## Contributing
+Contributions are welcomed! Especially bug and fixes for the code base. Please feel free to submit a Pull Request. 
+
+## Acknowledgements
+- The [deal.II](https://www.dealii.org/) developers for their finite element library
+- [Trilinos](https://trilinos.github.io/) for parallel linear algebra capabilities
+- [Catch2](https://github.com/catchorg/Catch2) for testing framework
+- [Github](https://github.com/) for automated testing and hosting the code base
 
