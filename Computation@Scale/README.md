@@ -23,17 +23,16 @@ The software package provides a parallel implementation of the incompressible Na
 - MPI implementation (OpenMPI, MPICH, etc.)
 - [Trilinos](https://trilinos.github.io/)
 - [Catch2](https://github.com/catchorg/Catch2) (for testing)
-- CMake (3.10 or newer)
+- CMake (3.13 or newer)
 
-Note : One can easily configure and run this software package by just installing a docker (https://www.docker.com/) on  their device and adding a deal.II image with everything build on it. 
-     : One such example is Master:focal 
-     : To install the image run this command on the device terminal after installing and running the docker.
-     : > docker pull dealii/dealii:master-focal
-     : > docker run -i -t dealii/dealii:master-focal
-       
+Note : One can easily configure and run this software package by just installing a docker (https://www.docker.com/) on  their device and adding a deal.II image with everything build on it. One such example is dealii:master-focal. To install the image run this command on the device terminal after installing and running the docker.
+```
+docker pull dealii/dealii:master-focal
+docker run -i -t dealii/dealii:master-focal
+```
 Note: Catch2 needs to installed separately even in the container image.
 
-## Building
+## Building and running
 
 ```bash
 # Clone the repository
@@ -55,4 +54,7 @@ make -j$(nproc)
 
 # For MPI sun
 mpirun -np number of processors ./navier_stokes_pipe
+```
+## Post processing 
+- Paraview can be used for post processing the results.
 
