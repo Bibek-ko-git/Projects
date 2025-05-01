@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the name of the project and target:
-set(TARGET "navier_stokes_cylinder")
+set(TARGET "navier_stokes_pipe")
 
 # Common source files for both targets
 set(COMMON_SRC
