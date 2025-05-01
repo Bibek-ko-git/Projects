@@ -3,10 +3,10 @@
 int main(int argc, char *argv[])
 {
   try {
-    Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv, 1);
+    Utilities::MPI::MPI_InitFinalize mpi_init(argc, argv,/*thread_level=*/ 1);
     
     // Create and run the channel flow solver
-    ChannelFlowSolver<2> solver(MPI_COMM_SELF);
+    ChannelFlowSolver<2> solver(MPI_COMM_WORLD);
     solver.run();
   }
   catch (std::exception &exc) {

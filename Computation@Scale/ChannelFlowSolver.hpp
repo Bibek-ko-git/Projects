@@ -3,6 +3,7 @@
 
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
+#include <deal.II/base/function_time.h>
 #include <deal.II/base/timer.h>
 #include <deal.II/base/utilities.h>
 #include <deal.II/base/conditional_ostream.h>
@@ -34,6 +35,8 @@
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
+
+#include <deal.II/distributed/tria.h>
 
 #include <fstream>
 #include <iostream>
@@ -75,6 +78,7 @@ protected:
   virtual void post_process_solution();
   double compute_time_step();
   double get_max_velocity();
+  double get_minimum_cell_size() const;
   
   // Physical parameters
   double mu, rho, Re;
@@ -93,7 +97,7 @@ protected:
   const unsigned int n_mpi_processes, this_mpi_process;
   ConditionalOStream pcout;
 
-  Triangulation<dim> triangulation;
+  parallel::distributed::Triangulation<dim> triangulation{mpi_communicator};  
   FESystem<dim>      fe;
   DoFHandler<dim>    dof_handler;
   MappingQ<dim>      mapping;
@@ -145,30 +149,30 @@ class ManufacturedSolutionSolver : public NavierStokesSolver<dim>
 public:
   ManufacturedSolutionSolver(const MPI_Comm &mpi_comm = MPI_COMM_SELF);
   
-  // Override the run method to use steady-state solve
-  void run() override;
-  
   // Compute error against exact solution
   double compute_error() const;
   
+  void solve_newton_system() override;
+  // Solve the system using Newton's method
+
+  // Override run method to handle time-dependent solution
+  void run() override;
+  
 protected:
-  void make_grid() override;
-  void set_boundary_conditions() override;
-  void setup_dofs() override;
-  
-  // Steady-state solving methods
-  void solve_steady_stokes();
-  void assemble_steady_stokes(TrilinosWrappers::SparseMatrix &matrix,
-                             TrilinosWrappers::MPI::Vector &rhs);
-  
-  // Exact solution for testing
+  // Exact solution for testing that depends on time
   class ExactSolution : public Function<dim>
   {
   public:
     ExactSolution() : Function<dim>(dim+1) {}
     
+    void set_time(double t) override { time = t; }
+    double get_time() const { return time; }
+
     void vector_value(const Point<dim>& p, Vector<double>& values) const override;
     void vector_gradient(const Point<dim>& p, std::vector<Tensor<1,dim>>& gradients) const override;
+    
+  private:
+    double time = 0.0;
   };
   
   // Source term (forcing function) for the manufactured solution
@@ -177,10 +181,23 @@ protected:
   public:
     ForcingFunction() : Function<dim>(dim) {}
     
+    void set_time(double t) override { time = t; }
+    double get_time() const { return time; }
+    
     void vector_value(const Point<dim>& p, Vector<double>& values) const override;
+    
+  private:
+    double time = 0.0;
   };
   
-  ExactSolution exact_solution;
+  void make_grid() override;
+  void set_boundary_conditions() override;
+  void setup_dofs() override;
+  void assemble_system() override;
+  void output_results(unsigned int step) override;
+  void add_forcing_terms();
+  
+  mutable ExactSolution exact_solution;
   ForcingFunction forcing_function;
 };
 
